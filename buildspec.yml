@@ -17,7 +17,6 @@ phases:
     commands:
        - echo Build started on `date`
        - echo Building the Docker image...
-       - npm run build
        - docker build --tag "$REPOSITORY_URI:$CODEBUILD_LOG_PATH" .
   post_build:
     commands:
