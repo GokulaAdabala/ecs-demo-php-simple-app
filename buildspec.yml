@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+       - apt-get update && apt-get -y install python-pip curl
+       - pip install --upgrade python
+       - pip install --upgrade awscli
+  pre_build:  
+    commands:
+       - printenv
+       - REPOSITORY_NAME="ecs-sample"
+       - REPOSITORY_URI="738639812692.dkr.ecr.us-east-1.amazonaws.com/ecs-sample"
+       - printf '[{"name":"%s", "imageUri":"%s:%s"}]' "$REPOSITORY_NAME" "$REPOSITORY_URI" "$CODEBUILD_LOG_PATH" > /tmp/build.json
+       - $(aws ecr get-login | sed -e 's/-e none//g')
+  build:
+    commands:
+       - echo Build started on `date`
+       - echo Building the Docker image...
+       - npm run build
+       - docker build --tag "$REPOSITORY_URI:$CODEBUILD_LOG_PATH" .
+  post_build:
+    commands:
+        - echo Build completed on `date`
+        - echo Pushing the Docker images...
+        - docker push "$REPOSITORY_URI:$CODEBUILD_LOG_PATH"
+artifacts:
+    files: /tmp/build.json
+    discard-paths: yes
+
+
