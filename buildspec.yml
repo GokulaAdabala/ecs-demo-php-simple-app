@@ -12,7 +12,7 @@ phases:
        - REPOSITORY_NAME="ecs-sample"
        - REPOSITORY_URI="738639812692.dkr.ecr.us-east-1.amazonaws.com/ecs-sample"
        - printf '[{"name":"%s", "imageUri":"%s:%s"}]' "$REPOSITORY_NAME" "$REPOSITORY_URI" "$CODEBUILD_LOG_PATH" > /tmp/build.json
-       - $(aws ecr get-login us-east-1 | sed -e 's/-e none//g')
+       - $(aws ecr get-login --region us-east-1 | sed -e 's/-e none//g')
   build:
     commands:
        - echo Build started on `date`
